@@ -1,0 +1,871 @@
+-- duality_migration_from_json.sql
+-- pls use DualitiMigration.sqlnb
+set define off
+drop table STUDENT_COLL_DV_ATTENDED_COURSE purge;
+drop table STUDENT_COLL_DV_COURSE purge;
+drop table STUDENT_COLL_DV_ROOM purge;
+drop table STUDENT_COLL_DV_ROOT purge;
+drop table STUDENT_COLL_DV_TEACHER purge;
+
+drop table student_coll_to_be_migrated purge;
+create table student_coll_to_be_migrated (data json);
+-- insert into student_coll_to_be_migrated (data) select json_serialize (data returning clob pretty ) from STUDENT_DV v where rownum<2;
+-- the above is not ok to populate a collection to be subsenquently migrated via DBMS_JSON_DUALITY, since the resulting docs contains the _metadata (and etag) fields
+declare
+  mydoc varchar2(32757):='{
+  "stuid" : "S17",
+  "location_longitude" : -66.56159,
+  "language_preferred" : "Arabic (Libya)",
+  "location_latitude" : 18.37406,
+  "attended_course" :
+  [
+    {
+      "studentscheduleschedid" : 102,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T5",
+      "studentscheduleroomid" : "D109",
+      "course" :
+      {
+        "course_id" : 112,
+        "course_name" : "Principles of Continuum Applied Mathematics",
+        "course_desc" : "Covers fundamental concepts in continuous applied mathematics. Applications from traffic flow, fluids, elasticity, granular flows, etc. Also covers continuum limit; conservation laws, quasi-equilibrium; kinematic waves; characteristics, simple waves, shocks; diffusion (linear and nonlinear); numerical solution of wave equations; finite differences, consistency, stability; discrete and fast Fourier transforms; spectral methods; transforms and series (Fourier, Laplace). Additional topics may include sonic booms, Mach cone, caustics, lattices, dispersion and group velocity. Uses MATLAB computing environment.",
+        "addtl_info" : "Educational direction"
+      },
+      "room" :
+      {
+        "room_id" : "D109",
+        "room_name" : "Room Building D, Room Number: 109, Integral",
+        "room_building" : "D",
+        "room_description" : "Room 101, Building D",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Assisted Listening",
+          "Video Distribution"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Computer Lab",
+          "Fitness Facilities",
+          "Reception Area",
+          "Study Room"
+        ],
+        "extra_technology_integration" :
+        [
+          "Classroom equipped with projectors",
+          "Classroom equipped with smartboards",
+          "Classroom equipped with reliable Wi-Fi"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T5",
+        "teacher_language_spoken" : "Albania",
+        "teacher_language_preferred" : "Albania",
+        "teacher_office_latitude" : 29.47757,
+        "teacher_first_name" : "Edna",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Fair and honest approach"
+        ],
+        "teacher_number" : 5,
+        "teacher_office_longitude" : -98.35053,
+        "teacher_birth_date" : "1973-04-10T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "Questioning_Techniques" : "In a  class, the teacher asks questions like, `What do you think the theorem is trying to solve through this assumptions?` to encourage critical thinking and discussion.",
+        "teacher_address" : "5019 W AIRPORT DR",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "High motivation",
+          "Praise for success and effort"
+        ],
+        "teacher_gender" : "female",
+        "teacher_last_name" : "Fowls"
+      }
+    },
+    {
+      "studentscheduleschedid" : 114,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T6",
+      "studentscheduleroomid" : "C104",
+      "course" :
+      {
+        "course_id" : 102,
+        "course_name" : "Differential Equations",
+        "course_desc" : "Study of differential equations, including modeling physical systems. Solution of first-order ODEs by analytical, graphical, and numerical methods. Linear ODEs with constant coefficients. Complex numbers and exponentials. Inhomogeneous equations: polynomial, sinusoidal, and exponential inputs. Oscillations, damping, resonance. Fourier series. Matrices, eigenvalues, eigenvectors, diagonalization. First order linear systems: normal modes, matrix exponentials, variation of parameters. Heat equation, wave equation. Nonlinear autonomous systems: critical point analysis, phase plane diagrams.",
+        "appl_info" : "Application direction"
+      },
+      "room" :
+      {
+        "room_id" : "C104",
+        "room_name" : "Room Building C, Room Number: 104, ProbRand",
+        "room_building" : "C",
+        "room_description" : "Room 101, Building C",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Assisted Listening",
+          "Distance Learning",
+          "High-SpeedWi-Fi",
+          "Interactive Technology"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Computer Lab",
+          "Dining Hall",
+          "Fitness Facilities",
+          "Reception Area",
+          "Student lounge",
+          "Study Room"
+        ],
+        "extra_forniture" :
+        [
+          "Movable furniture for different activities",
+          "Desks and chairs can be rearranged for group work, presentations, or individual study create a dynamic learning space"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T6",
+        "teacher_language_spoken" : "Arabic (Iraq)",
+        "teacher_language_preferred" : "Arabic (Iraq)",
+        "teacher_office_latitude" : 36.17289,
+        "teacher_first_name" : "Edris",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Optimistic and patient attitude"
+        ],
+        "teacher_number" : 6,
+        "teacher_office_longitude" : -115.12179,
+        "teacher_birth_date" : "1974-09-26T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Academic Support"
+        ],
+        "teacher_address" : "1002 TERMINAL DRIVE",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Conducting lessons with open communication",
+          "High motivation"
+        ],
+        "Active_Listening" : "Teacher listens attentively to student??s concerns about a difficult topic, providing feedback and additional resources to help the student overcome their challenges.",
+        "teacher_gender" : "male",
+        "teacher_last_name" : "Liff"
+      }
+    },
+    {
+      "studentscheduleschedid" : 126,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T7",
+      "studentscheduleroomid" : "B102",
+      "course" :
+      {
+        "course_id" : 101,
+        "course_name" : "Calculus",
+        "course_desc" : "Differentiation and integration of functions of one variable, with applications. Informal treatment of limits and continuity. Differentiation: definition, rules, application to graphing, rates, approximations, and extremum problems. Indefinite integration; separable first-order differential equations. Definite integral; fundamental theorem of calculus. Applications of integration to geometry and science. Elementary functions. Techniques of integration. Polar coordinates. L`Hopital`s rule. Improper integrals. Infinite series: geometric, p-harmonic, simple comparison tests, power series for some elementary functions.",
+        "appl_info" : "Application direction"
+      },
+      "room" :
+      {
+        "room_id" : "B102",
+        "room_name" : "Room Building B, Room Number: 102, Geometry",
+        "room_building" : "B",
+        "room_description" : "Room 101, Building B",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Distance Learning",
+          "Interactive Technology",
+          "Projection Systems",
+          "Video Conferencing"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Computer Lab",
+          "Student lounge",
+          "Study Areas",
+          "Study Room",
+          "Theater"
+        ],
+        "extra_technology_integration" :
+        [
+          "Classroom equipped with projectors",
+          "Classroom equipped with smartboards",
+          "Classroom equipped with reliable Wi-Fi"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T7",
+        "teacher_language_spoken" : "Arabic (Bahrain)",
+        "teacher_language_preferred" : "Arabic (Bahrain)",
+        "teacher_office_latitude" : 33.6162,
+        "teacher_first_name" : "Daniel",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Valuing"
+        ],
+        "teacher_number" : 7,
+        "teacher_office_longitude" : -111.95387,
+        "teacher_birth_date" : "1980-11-05T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "teacher_address" : "CITY HALL, 401 INDEPENDENCE",
+        "Differentiation" : "Teacher notices when some students need better understanding, so they incorporate more diagrams and videos into their lessons, while also providing written materials for those who prefer reading",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Subject matter expertise"
+        ],
+        "teacher_gender" : "male",
+        "teacher_last_name" : "Strength"
+      }
+    },
+    {
+      "studentscheduleschedid" : 138,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T8",
+      "studentscheduleroomid" : "A109",
+      "course" :
+      {
+        "course_id" : 110,
+        "course_name" : "Mathematics Lecture Series",
+        "course_desc" : "Ten lectures by mathematics faculty members on interesting topics from both classical and modern mathematics. All lectures accessible to students with calculus background and an interest in mathematics. At each lecture, reading and exercises are assigned. Students prepare these for discussion in a weekly problem session.",
+        "addtl_info" : "Educational direction"
+      },
+      "room" :
+      {
+        "room_id" : "A109",
+        "room_name" : "Room Building A, Room Number: 109, Integral",
+        "room_building" : "A",
+        "room_description" : "Room 101, Building A",
+        "ROOM_FACILITY" :
+        [
+          "Distance Learning",
+          "Interactive Technology",
+          "Projection Systems",
+          "Streaming & Recording"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Pet-Friendly",
+          "Reception Area",
+          "Student lounge",
+          "Study Areas",
+          "Study Room",
+          "Theater"
+        ],
+        "extra_ergonomics" :
+        [
+          "Adjustable chairs",
+          "Spacious desks"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T8",
+        "teacher_language_spoken" : "Afrikaans",
+        "teacher_language_preferred" : "Afrikaans",
+        "Lesson_Planning" : "Teacher who creates a weekly lesson plan that includes a mix of reading, writing, and hands-on activities to cater to different learning styles and keep students engaged.",
+        "teacher_office_latitude" : 36.07672,
+        "teacher_first_name" : "Edith",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Valuing"
+        ],
+        "teacher_number" : 8,
+        "teacher_office_longitude" : -114.97844,
+        "teacher_birth_date" : "1965-05-05T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "teacher_address" : "11120 42ND ST SW",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Subject matter expertise"
+        ],
+        "teacher_gender" : "female",
+        "teacher_last_name" : "Montpellier"
+      }
+    }
+  ],
+  "birth_date" : "1994-11-06T00:00:00",
+  "address" : "584 AIRPORT RD BOX 1",
+  "expectation" : "Explanations: clear and detailed explanations of mathematical concepts.",
+  "gender" : "female",
+  "educational_level" : "Upper secondary education",
+  "language_spoken" : "Arabic (Libya)",
+  "computer_literacy" : "Communication and collaboration",
+  "first_name" : "Nora",
+  "LEARNING_STYLE" :
+  [
+    "sensing/intuitive",
+    "visual/verbal"
+  ],
+  "USE_OF_TECHNOLOGY" :
+  [
+    "adaptable",
+    "adaptive"
+  ],
+  "last_name" : "Spindle"
+}';
+begin
+-- direct insert in SQL yelds ORA-01704: string literal too long
+-- insert in PL/SQ of doc in a '' constants yelds: ORA-06512: at line 2 + ORA-01704: string literal too long
+-- so inserting the doc via variable mydoc
+insert into student_coll_to_be_migrated (data) values (mydoc);
+end;
+/
+commit;
+select count(1) from student_coll_to_be_migrated;
+set long 1000000
+set lines 132
+set hea off
+set def off
+set pages 999
+set trimspool on
+select json_serialize (data returning clob pretty ) from student_coll_to_be_migrated v where rownum<2;
+
+set serveroutput on hea off pages 0 lines 500
+DECLARE
+  ddl_sql CLOB;
+BEGIN
+  ddl_sql :=
+   DBMS_JSON_DUALITY.infer_and_generate_schema(
+     JSON('{"tableNames"    : [ "STUDENT_COLL_TO_BE_MIGRATED" ],
+            "viewNames"     : [ "STUDENT_COLL_DV" ],
+            "useFlexFields" : true,
+            "outputFormat"  : "standalone",
+            "minFrequency"  : 25}'));
+  DBMS_OUTPUT.put_line('DDL Script: ');
+  DBMS_OUTPUT.put_line(ddl_sql);
+END;
+/
+
+/*
+  DDL Script:
+
+CREATE TABLE student_coll_dv_root(
+   stuid  varchar2(64)  DEFAULT ON NULL SYS_GUID(),
+   gender  varchar2(64)  /* UNIQUE */,
+   address  varchar2(64)  /* UNIQUE */,
+   last_name  varchar2(64)  /* UNIQUE */,
+   birth_date  timestamp,
+   first_name  varchar2(64)  /* UNIQUE */,
+   expectation  varchar2(128)  /* UNIQUE */,
+   learning_style  json,
+   language_spoken  varchar2(64)  /* UNIQUE */,
+   use_of_technology  json,
+   computer_literacy  varchar2(64)  /* UNIQUE */,
+   educational_level varchar2(64)  /* UNIQUE */,
+   location_latitude  number  /* UNIQUE */,
+   language_preferred  varchar2(64)  /* UNIQUE */,
+   location_longitude  number  /* UNIQUE */,
+   ora$flex  JSON(Object),
+   PRIMARY KEY(stuid)
+);
+
+CREATE TABLE student_coll_dv_attended_course(
+   studentschedulestuid  varchar2(64),
+   studentscheduleroomid  varchar2(64)  /* UNIQUE */,
+   studentscheduleschedid  number  /* UNIQUE */,
+   studentscheduleteachid  varchar2(64)  DEFAULT ON NULL SYS_GUID(),
+   teacher_number_student_coll_dv_teacher  number,
+   course_id_student_coll_dv_course  number,
+   room_building_student_coll_dv_room  varchar2(64),
+   stuid_student_coll_dv_root  varchar2(64),
+   ora$flex  JSON(Object),
+   PRIMARY KEY(studentscheduleteachid)
+);
+
+CREATE TABLE student_coll_dv_teacher(
+   teacher_id  varchar2(64)  /* UNIQUE */,
+   teacher_gender  varchar2(64),
+   teacher_number  number  GENERATED BY DEFAULT ON NULL AS IDENTITY,
+   differentiation  varchar2(256),
+   lesson_planning varchar2(256),
+   teacher_address  varchar2(64)  /* UNIQUE */,
+   active_listening  varchar2(256),
+   ethical_attitude  json,
+   support_attitude  json,
+   teacher_last_name  varchar2(64)  /* UNIQUE */,
+   teacher_birth_date  timestamp,
+   teacher_first_name  varchar2(64)  /* UNIQUE */,
+   professional_attitude  json,
+   questioning_techniques  varchar2(256),
+   teacher_language_spoken  varchar2(64)  /* UNIQUE */,
+   teacher_office_latitude  number  /* UNIQUE */,
+   teacher_office_longitude number  /* UNIQUE */,
+   teacher_language_preferred  varchar2(64)  /* UNIQUE */,
+   ora$flex  JSON(Object),
+   PRIMARY KEY(teacher_number)
+);
+
+CREATE TABLE student_coll_dv_course(
+   appl_info  varchar2(64),
+   course_id  number  GENERATED BY DEFAULT ON NULL AS IDENTITY,
+   addtl_info  varchar2(64),
+   course_desc  varchar2(1024)  /* UNIQUE */,
+   course_name  varchar2(64)  /* UNIQUE */,
+   ora$flex  JSON(Object),
+   PRIMARY KEY(course_id)
+);
+
+CREATE TABLE student_coll_dv_room(
+   room_id varchar2(64)  /* UNIQUE */,
+   room_name  varchar2(64)  /* UNIQUE */,
+   room_facility  json,
+   room_building  varchar2(64)  DEFAULT ON NULL SYS_GUID(),
+   extra_forniture  json,
+   extra_ergonomics  json,
+   room_description  varchar2(64)  /* UNIQUE */,
+   building_facility  json,
+   extra_technology_integration  json,
+   ora$flex  JSON(Object),
+   PRIMARY KEY(room_building)
+);
+
+ALTER TABLE student_coll_dv_attended_course ADD CONSTRAINT fk_student_coll_dv_attended_course_to_student_coll_dv_teacher FOREIGN KEY (teacher_number_student_coll_dv_teacher) REFERENCES student_coll_dv_teacher(teacher_number);
+ALTER TABLE student_coll_dv_attended_course ADD CONSTRAINT fk_student_coll_dv_attended_course_to_student_coll_dv_course FOREIGN KEY (course_id_student_coll_dv_course) REFERENCES student_coll_dv_course(course_id);
+ALTER TABLE student_coll_dv_attended_course ADD CONSTRAINT fk_student_coll_dv_attended_course_to_student_coll_dv_room FOREIGN KEY (room_building_student_coll_dv_room) REFERENCES student_coll_dv_room(room_building);
+ALTER TABLE student_coll_dv_attended_course ADD CONSTRAINT fk_student_coll_dv_attended_course_to_student_coll_dv_root FOREIGN KEY (stuid_student_coll_dv_root) REFERENCES student_coll_dv_root(stuid);
+CREATE INDEX IF NOT EXISTS fk_student_coll_dv_attended_course_to_student_coll_dv_teacher_index ON student_coll_dv_attended_course(teacher_number_student_coll_dv_teacher);
+CREATE INDEX IF NOT EXISTS fk_student_coll_dv_attended_course_to_student_coll_dv_course_index ON student_coll_dv_attended_course(course_id_student_coll_dv_course);
+CREATE INDEX IF NOT EXISTS fk_student_coll_dv_attended_course_to_student_coll_dv_room_index ON student_coll_dv_attended_course(room_building_student_coll_dv_room);
+CREATE INDEX IF NOT EXISTS fk_student_coll_dv_attended_course_to_student_coll_dv_root_index ON student_coll_dv_attended_course(stuid_student_coll_dv_root);
+
+CREATE OR REPLACE JSON RELATIONAL DUALITY
+VIEW STUDENT_COLL_DV AS
+student_coll_dv_root @insert @update @delete
+{
+  _id : stuid
+  stuid @generated (path: "$._id")
+  gender
+  address
+  last_name
+  birth_date
+  first_name
+  expectation
+  LEARNING_STYLE: learning_style
+  attended_course: student_coll_dv_attended_course @insert @update @delete
+  {
+    room: student_coll_dv_room @insert @update
+    {
+      room_id
+      room_name
+      ROOM_FACILITY: room_facility
+      room_building
+      extra_forniture
+      extra_ergonomics
+      room_description
+      BUILDING_FACILITY: building_facility
+      extra_technology_integration
+      ora$flex @flex
+    }
+    course: student_coll_dv_course @insert @update
+    {
+      appl_info
+      course_id
+      addtl_info
+      course_desc
+      course_name
+      ora$flex @flex
+    }
+    teacher: student_coll_dv_teacher @insert @update
+    {
+      teacher_id
+      teacher_gender
+      teacher_number
+      Differentiation: differentiation
+      Lesson_Planning: lesson_planning
+      teacher_address
+      Active_Listening: active_listening
+      ETHICAL_ATTITUDE: ethical_attitude
+      SUPPORT_ATTITUDE: support_attitude
+      teacher_last_name
+      teacher_birth_date
+      teacher_first_name
+      PROFESSIONAL_ATTITUDE: professional_attitude
+      Questioning_Techniques: questioning_techniques
+      teacher_language_spoken
+      teacher_office_latitude
+      teacher_office_longitude
+      teacher_language_preferred
+      ora$flex @flex
+    }
+    studentschedulestuid
+    studentscheduleroomid
+    studentscheduleschedid
+    studentscheduleteachid
+    ora$flex @flex
+  }
+  language_spoken
+  USE_OF_TECHNOLOGY: use_of_technology
+  computer_literacy
+  educational_level
+  location_latitude
+  language_preferred
+  location_longitude
+  ora$flex @flex
+};
+
+CREATE OR REPLACE TRIGGER INSERT_TRIGGER_STUDENT_COLL_DV
+  BEFORE INSERT
+  ON STUDENT_COLL_DV
+  FOR EACH ROW
+DECLARE
+  inp_jsonobj json_object_t;
+BEGIN
+  inp_jsonobj := json_object_t(:new.data);
+  IF NOT inp_jsonobj.has('_id')
+  THEN
+    inp_jsonobj.put('_id', inp_jsonobj.get('stuid'));
+    :new.data := inp_jsonobj.to_json;
+  END IF;
+END;
+/
+
+PL/SQL procedure successfully completed.
+*/
+
+desc STUDENT_COLL_DV
+select * from STUDENT_COLL_DV;
+-- now test an insert...
+-- again,  JSON doc is too long as a string literal, so to avoid:
+-- ORA-01704: string literal too long
+-- just use a PL/SQL block.
+declare
+  mydocv varchar2(32767):='{
+  "_id" : "S17",
+  "location_longitude" : -66.56159,
+  "language_preferred" : "Arabic (Libya)",
+  "location_latitude" : 18.37406,
+  "attended_course" :
+  [
+    {
+      "studentscheduleschedid" : 102,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T5",
+      "studentscheduleroomid" : "D109",
+      "course" :
+      {
+        "course_id" : 112,
+        "course_name" : "Principles of Continuum Applied Mathematics",
+        "course_desc" : "Covers fundamental concepts in continuous applied mathematics. Applications from traffic flow, fluids, elasticity, granular flows, etc.  Also covers continuum limit; conservation laws, quasi-equilibrium; kinematic waves; characteristics, simple waves, shocks; diffusion (linear and nonlinear); numerical solution of wave equations; finite differences, consistency, stability; discrete and fast Fourier transforms; spectral methods; transforms and series (Fourier, Laplace). Additional topics may include sonic booms, Mach cone, caustics, lattices, dispersion and group velocity. Uses MATLAB computing environment.",
+        "addtl_info" : "Educational direction"
+      },
+      "room" :
+      {
+        "room_id" : "D109",
+        "room_name" : "Room Building D, Room Number: 109, Integral",
+        "room_building" : "D",
+        "room_description" : "Room 101, Building D",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Assisted Listening",
+          "Video Distribution"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Computer Lab",
+          "Fitness Facilities",
+          "Reception Area",
+          "Study Room"
+        ],
+        "extra_technology_integration" :
+        [
+          "Classroom equipped with projectors",
+          "Classroom equipped with smartboards",
+          "Classroom equipped with reliable Wi-Fi"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T5",
+        "teacher_language_spoken" : "Albania",
+        "teacher_language_preferred" : "Albania",
+        "teacher_office_latitude" : 29.47757,
+        "teacher_first_name" : "Edna",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Fair and honest approach"
+        ],
+        "teacher_number" : 5,
+        "teacher_office_longitude" : -98.35053,
+        "teacher_birth_date" : "1973-04-10T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "Questioning_Techniques" : "In a class, the teacher asks questions like ’What do you think the theorem is trying to solve through this assumptions?’ to encourage critical thinking and discussion.",
+        "teacher_address" : "5019 W AIRPORT DR",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "High motivation",
+          "Praise for success and effort"
+        ],
+        "teacher_gender" : "female",
+        "teacher_last_name" : "Fowls"
+      }
+    },
+    {
+      "studentscheduleschedid" : 114,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T6",
+      "studentscheduleroomid" : "C104",
+      "course" :
+      {
+        "course_id" : 102,
+        "course_name" : "Differential Equations",
+        "course_desc" : "Study of differential equations, including modeling physical systems. Solution of first-order ODEs by analytical, graphical, and numeri cal methods. Linear ODEs with constant coefficients. Complex numbers and exponentials. Inhomogeneous equations: polynomial, sinusoidal, and exponential inputs. Oscillations, damping, resonance. Fourier series. Matrices, eigenvalues, eigenvectors, diagonalization. First order linear systems: normal modes, matrix exponentials, variation of parameters. Heat equation, wave equation. Nonlinear autonomous systems: critical point analysis, phase plane diagrams.",
+        "appl_info" : "Application direction"
+      },
+      "room" :
+      {
+        "room_id" : "C104",
+        "room_name" : "Room Building C, Room Number: 104, ProbRand",
+        "room_building" : "C",
+        "room_description" : "Room 101, Building C",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Assisted Listening",
+          "Distance Learning",
+          "High-SpeedWi-Fi",
+          "Interactive Technology"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Computer Lab",
+          "Dining Hall",
+          "Fitness Facilities",
+          "Reception Area",
+          "Student lounge",
+          "Study Room"
+        ],
+        "extra_forniture" :
+        [
+          "Movable furniture for different activities", "Desks and chairs can be rearranged for group work, presentations, or individual study create a dynamic learning space"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T6",
+        "teacher_language_spoken" : "Arabic (Iraq)",
+        "teacher_language_preferred" : "Arabic (Iraq)",
+        "teacher_office_latitude" : 36.17289,
+        "teacher_first_name" : "Edris",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Optimistic and patient attitude"
+        ],
+        "teacher_number" : 6,
+        "teacher_office_longitude" : -115.12179,
+        "teacher_birth_date" : "1974-09-26T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Academic Support"
+        ],
+        "teacher_address" : "1002 TERMINAL DRIVE",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Conducting lessons with open communication",
+          "High motivation"
+        ],
+        "Active_Listening" : "Teacher listens attentively to students concerns about a difficult topic, providing feedback and additional resources to help the student overcome their challenges.",
+        "teacher_gender" : "male",
+        "teacher_last_name" : "Liff"
+      }
+    },
+    {
+      "studentscheduleschedid" : 126,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T7",
+      "studentscheduleroomid" : "B102",
+      "course" :
+      {
+        "course_id" : 101,
+        "course_name" : "Calculus",
+        "course_desc" : "Differentiation and integration of functions of one variable, with applications. Informal treatment of limits and continuity. Differentiation: definition, rules, application to graphing, rates, approximations, and extremum problems. Indefinite integration; separable first-order differential equations. Definite integral; fundamental theorem of calculus. Applications of integration to geometry and science. Elementary functions. Techniques of integration. Polar coordinates. L’Hopital’s rule. Improper integrals. Infinite series: geometric, p-harmonic, simple comparison tests, power series for some elementary functions.",
+        "appl_info" : "Application direction"
+      },
+      "room" :
+      {
+        "room_id" : "B102",
+        "room_name" : "Room Building B, Room Number: 102, Geometry",
+        "room_building" : "B",
+        "room_description" : "Room 101, Building B",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Distance Learning",
+          "Interactive Technology",
+          "Projection Systems",
+          "Video Conferencing"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Computer Lab",
+          "Student lounge",
+          "Study Areas",
+          "Study Room",
+          "Theater"
+        ],
+        "extra_technology_integration" :
+        [
+          "Classroom equipped with projectors",
+          "Classroom equipped with smartboards",
+          "Classroom equipped with reliable Wi-Fi"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T7",
+        "teacher_language_spoken" : "Arabic (Bahrain)",
+        "teacher_language_preferred" : "Arabic (Bahrain)",
+        "teacher_office_latitude" : 33.6162,
+        "teacher_first_name" : "Daniel",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Valuing"
+        ],
+        "teacher_number" : 7,
+        "teacher_office_longitude" : -111.95387,
+        "teacher_birth_date" : "1980-11-05T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "teacher_address" : "CITY HALL, 401 INDEPENDENCE",
+        "Differentiation" : "Teacher notices when some students need better understanding, so they incorporate more diagrams and videos into their lessons, while also providing written materials for those who prefer reading",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Subject matter expertise"
+        ],
+        "teacher_gender" : "male",
+        "teacher_last_name" : "Strength"
+      }
+    },
+    {
+      "studentscheduleschedid" : 138,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T8",
+      "studentscheduleroomid" : "A109",
+      "course" :
+      {
+        "course_id" : 110,
+        "course_name" : "Mathematics Lecture Series",
+        "course_desc" : "Ten lectures by mathematics faculty members on interesting topics from both classical and modern mathematics. All lectures accessible to students with calculus background and an interest in mathematics. At each lecture, reading and exercises are assigned. Students prepare these for discussion in a weekly problem session.",
+        "addtl_info" : "Educational direction"
+      },
+      "room" :
+      {
+        "room_id" : "A109",
+        "room_name" : "Room Building A, Room Number: 109, Integral",
+        "room_building" : "A",
+        "room_description" : "Room 101, Building A",
+        "ROOM_FACILITY" :
+        [
+          "Distance Learning",
+          "Interactive Technology",
+          "Projection Systems",
+          "Streaming & Recording"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Pet-Friendly",
+          "Reception Area",
+          "Student lounge",
+          "Study Areas",
+          "Study Room",
+          "Theater"
+        ],
+        "extra_ergonomics" :
+        [
+          "Adjustable chairs",
+          "Spacious desks"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T8",
+        "teacher_language_spoken" : "Afrikaans",
+        "teacher_language_preferred" : "Afrikaans",
+        "Lesson_Planning" : "Teacher who creates a weekly lesson plan that includes a mix of reading, writing, and hands-on activities to cater to different learning styles and keep students engaged.",
+        "teacher_office_latitude" : 36.07672,
+        "teacher_first_name" : "Edith",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Valuing"
+        ],
+        "teacher_number" : 8,
+        "teacher_office_longitude" : -114.97844,
+        "teacher_birth_date" : "1965-05-05T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "teacher_address" : "11120 42ND ST SW",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Subject matter expertise"
+        ],
+        "teacher_gender" : "female",
+        "teacher_last_name" : "Montpellier"
+      }
+    }
+  ],
+  "birth_date" : "1994-11-06T00:00:00",
+  "address" : "584 AIRPORT RD BOX 1",
+  "expectation" : "Explanations: clear and detailed explanations of mathematical concepts.",
+  "gender" : "female",
+  "educational_level" : "Upper secondary education",
+  "language_spoken" : "Arabic (Libya)",
+  "computer_literacy" : "Communication and collaboration",
+  "first_name" : "Nora",
+  "LEARNING_STYLE" :
+  [
+    "sensing/intuitive",
+    "visual/verbal"
+  ],
+  "USE_OF_TECHNOLOGY" :
+  [
+    "adaptable",
+    "adaptive"
+  ],
+  "last_name" : "Spindle"
+}';
+begin
+  insert into STUDENT_COLL_DV (data) values (mydocv);
+end;
+/
+
+select * from STUDENT_COLL_DV;
+select * from STUDENT_COLL_DV_ATTENDED_COURSE ;
+select * from STUDENT_COLL_DV_COURSE          ;
+select * from STUDENT_COLL_DV_ROOM            ;
+select * from STUDENT_COLL_DV_ROOT            ;
+select * from STUDENT_COLL_DV_TEACHER         ;
+roll
+
+*/
+
+DROP VIEW STUDENT_COLL_DV;
+DROP TABLE STUDENT_COLL_DV_ATTENDED_COURSE purge;
+DROP TABLE STUDENT_COLL_DV_COURSE          purge;
+DROP TABLE STUDENT_COLL_DV_ROOM            purge;
+DROP TABLE STUDENT_COLL_DV_ROOT            purge;
+DROP TABLE STUDENT_COLL_DV_TEACHER         purge;
+DROP TABLE STUDENT_COLL_TO_BE_MIGRATED     purge;

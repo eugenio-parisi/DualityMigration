@@ -1,0 +1,305 @@
+{
+  "stuid" : "S17",
+  "location_longitude" : -66.56159,
+  "language_preferred" : "Arabic (Libya)",
+  "location_latitude" : 18.37406,
+  "attended_course" :
+  [
+    {
+      "studentscheduleschedid" : 102,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T5",
+      "studentscheduleroomid" : "D109",
+      "course" :
+      {
+        "course_id" : 112,
+        "course_name" : "Principles of Continuum Applied Mathematics",
+        "course_desc" : "Covers fundamental concepts in continuous applied mathematics. Applications from traffic flow, fluids, elasticity, granular flows, etc. Also covers continuum limit; conservation laws, quasi-equilibrium; kinematic waves; characteristics, simple waves, shocks; diffusion (linear and nonlinear); numerical solution of wave equations; finite differences, consistency, stability; discrete and fast Fourier transforms; spectral methods; transforms and series (Fourier, Laplace). Additional topics may include sonic booms, Mach cone, caustics, lattices, dispersion and group velocity. Uses MATLAB computing environment.",
+        "addtl_info" : "Educational direction"
+      },
+      "room" :
+      {
+        "room_id" : "D109",
+        "room_name" : "Room Building D, Room Number: 109, Integral",
+        "room_building" : "D",
+        "room_description" : "Room 101, Building D",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Assisted Listening",
+          "Video Distribution"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Computer Lab",
+          "Fitness Facilities",
+          "Reception Area",
+          "Study Room"
+        ],
+        "extra_technology_integration" :
+        [
+          "Classroom equipped with projectors",
+          "Classroom equipped with smartboards",
+          "Classroom equipped with reliable Wi-Fi"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T5",
+        "teacher_language_spoken" : "Albania",
+        "teacher_language_preferred" : "Albania",
+        "teacher_office_latitude" : 29.47757,
+        "teacher_first_name" : "Edna",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Fair and honest approach"
+        ],
+        "teacher_number" : 5,
+        "teacher_office_longitude" : -98.35053,
+        "teacher_birth_date" : "1973-04-10T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "Questioning_Techniques" : "In a  class, the teacher asks questions like, `What do you think the theorem is trying to solve through this assumptions?` to encourage critical thinking and discussion.",
+        "teacher_address" : "5019 W AIRPORT DR",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "High motivation",
+          "Praise for success and effort"
+        ],
+        "teacher_gender" : "female",
+        "teacher_last_name" : "Fowls"
+      }
+    },
+    {
+      "studentscheduleschedid" : 114,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T6",
+      "studentscheduleroomid" : "C104",
+      "course" :
+      {
+        "course_id" : 102,
+        "course_name" : "Differential Equations",
+        "course_desc" : "Study of differential equations, including modeling physical systems. Solution of first-order ODEs by analytical, graphical, and numerical methods. Linear ODEs with constant coefficients. Complex numbers and exponentials. Inhomogeneous equations: polynomial, sinusoidal, and exponential inputs. Oscillations, damping, resonance. Fourier series. Matrices, eigenvalues, eigenvectors, diagonalization. First order linear systems: normal modes, matrix exponentials, variation of parameters. Heat equation, wave equation. Nonlinear autonomous systems: critical point analysis, phase plane diagrams.",
+        "appl_info" : "Application direction"
+      },
+      "room" :
+      {
+        "room_id" : "C104",
+        "room_name" : "Room Building C, Room Number: 104, ProbRand",
+        "room_building" : "C",
+        "room_description" : "Room 101, Building C",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Assisted Listening",
+          "Distance Learning",
+          "High-SpeedWi-Fi",
+          "Interactive Technology"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Computer Lab",
+          "Dining Hall",
+          "Fitness Facilities",
+          "Reception Area",
+          "Student lounge",
+          "Study Room"
+        ],
+        "extra_forniture" :
+        [
+          "Movable furniture for different activities",
+          "Desks and chairs can be rearranged for group work, presentations, or individual study create a dynamic learning space"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T6",
+        "teacher_language_spoken" : "Arabic (Iraq)",
+        "teacher_language_preferred" : "Arabic (Iraq)",
+        "teacher_office_latitude" : 36.17289,
+        "teacher_first_name" : "Edris",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Optimistic and patient attitude"
+        ],
+        "teacher_number" : 6,
+        "teacher_office_longitude" : -115.12179,
+        "teacher_birth_date" : "1974-09-26T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Academic Support"
+        ],
+        "teacher_address" : "1002 TERMINAL DRIVE",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Conducting lessons with open communication",
+          "High motivation"
+        ],
+        "Active_Listening" : "Teacher listens attentively to student??s concerns about a difficult topic, providing feedback and additional resources to help the student overcome their challenges.",
+        "teacher_gender" : "male",
+        "teacher_last_name" : "Liff"
+      }
+    },
+    {
+      "studentscheduleschedid" : 126,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T7",
+      "studentscheduleroomid" : "B102",
+      "course" :
+      {
+        "course_id" : 101,
+        "course_name" : "Calculus",
+        "course_desc" : "Differentiation and integration of functions of one variable, with applications. Informal treatment of limits and continuity. Differentiation: definition, rules, application to graphing, rates, approximations, and extremum problems. Indefinite integration; separable first-order differential equations. Definite integral; fundamental theorem of calculus. Applications of integration to geometry and science. Elementary functions. Techniques of integration. Polar coordinates. L`Hopital`s rule. Improper integrals. Infinite series: geometric, p-harmonic, simple comparison tests, power series for some elementary functions.",
+        "appl_info" : "Application direction"
+      },
+      "room" :
+      {
+        "room_id" : "B102",
+        "room_name" : "Room Building B, Room Number: 102, Geometry",
+        "room_building" : "B",
+        "room_description" : "Room 101, Building B",
+        "ROOM_FACILITY" :
+        [
+          "AV Furniture",
+          "Distance Learning",
+          "Interactive Technology",
+          "Projection Systems",
+          "Video Conferencing"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Computer Lab",
+          "Student lounge",
+          "Study Areas",
+          "Study Room",
+          "Theater"
+        ],
+        "extra_technology_integration" :
+        [
+          "Classroom equipped with projectors",
+          "Classroom equipped with smartboards",
+          "Classroom equipped with reliable Wi-Fi"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T7",
+        "teacher_language_spoken" : "Arabic (Bahrain)",
+        "teacher_language_preferred" : "Arabic (Bahrain)",
+        "teacher_office_latitude" : 33.6162,
+        "teacher_first_name" : "Daniel",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Valuing"
+        ],
+        "teacher_number" : 7,
+        "teacher_office_longitude" : -111.95387,
+        "teacher_birth_date" : "1980-11-05T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "teacher_address" : "CITY HALL, 401 INDEPENDENCE",
+        "Differentiation" : "Teacher notices when some students need better understanding, so they incorporate more diagrams and videos into their lessons, while also providing written materials for those who prefer reading",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Subject matter expertise"
+        ],
+        "teacher_gender" : "male",
+        "teacher_last_name" : "Strength"
+      }
+    },
+    {
+      "studentscheduleschedid" : 138,
+      "studentschedulestuid" : "S17",
+      "studentscheduleteachid" : "T8",
+      "studentscheduleroomid" : "A109",
+      "course" :
+      {
+        "course_id" : 110,
+        "course_name" : "Mathematics Lecture Series",
+        "course_desc" : "Ten lectures by mathematics faculty members on interesting topics from both classical and modern mathematics. All lectures accessible to students with calculus background and an interest in mathematics. At each lecture, reading and exercises are assigned. Students prepare these for discussion in a weekly problem session.",
+        "addtl_info" : "Educational direction"
+      },
+      "room" :
+      {
+        "room_id" : "A109",
+        "room_name" : "Room Building A, Room Number: 109, Integral",
+        "room_building" : "A",
+        "room_description" : "Room 101, Building A",
+        "ROOM_FACILITY" :
+        [
+          "Distance Learning",
+          "Interactive Technology",
+          "Projection Systems",
+          "Streaming & Recording"
+        ],
+        "BUILDING_FACILITY" :
+        [
+          "Classroom",
+          "Pet-Friendly",
+          "Reception Area",
+          "Student lounge",
+          "Study Areas",
+          "Study Room",
+          "Theater"
+        ],
+        "extra_ergonomics" :
+        [
+          "Adjustable chairs",
+          "Spacious desks"
+        ]
+      },
+      "teacher" :
+      {
+        "teacher_id" : "T8",
+        "teacher_language_spoken" : "Afrikaans",
+        "teacher_language_preferred" : "Afrikaans",
+        "Lesson_Planning" : "Teacher who creates a weekly lesson plan that includes a mix of reading, writing, and hands-on activities to cater to different learning styles and keep students engaged.",
+        "teacher_office_latitude" : 36.07672,
+        "teacher_first_name" : "Edith",
+        "ETHICAL_ATTITUDE" :
+        [
+          "Valuing"
+        ],
+        "teacher_number" : 8,
+        "teacher_office_longitude" : -114.97844,
+        "teacher_birth_date" : "1965-05-05T00:00:00",
+        "SUPPORT_ATTITUDE" :
+        [
+          "Moral and material support"
+        ],
+        "teacher_address" : "11120 42ND ST SW",
+        "PROFESSIONAL_ATTITUDE" :
+        [
+          "Subject matter expertise"
+        ],
+        "teacher_gender" : "female",
+        "teacher_last_name" : "Montpellier"
+      }
+    }
+  ],
+  "birth_date" : "1994-11-06T00:00:00",
+  "address" : "584 AIRPORT RD BOX 1",
+  "expectation" : "Explanations: clear and detailed explanations of mathematical concepts.",
+  "gender" : "female",
+  "educational_level" : "Upper secondary education",
+  "language_spoken" : "Arabic (Libya)",
+  "computer_literacy" : "Communication and collaboration",
+  "first_name" : "Nora",
+  "LEARNING_STYLE" :
+  [
+    "sensing/intuitive",
+    "visual/verbal"
+  ],
+  "USE_OF_TECHNOLOGY" :
+  [
+    "adaptable",
+    "adaptive"
+  ],
+  "last_name" : "Spindle"
+}

@@ -1,0 +1,99 @@
+cells:
+  - kind: 2
+    value: >
+      -- Create the DEMO_STUDENT local database user for Oracle AI Database
+      26ai.
+
+      --
+
+      -- Run this as SYS, SYSTEM, ADMIN, or another account with CREATE USER and
+
+      -- role grant privileges, connected to the target PDB (for example
+      FREEPDB1).
+
+
+
+      WHENEVER SQLERROR EXIT SQL.SQLCODE
+
+      DEFINE demo_user = DEMO_STUDENT
+
+      PROMPT Checking that this script is running in a PDB...
+
+
+      DECLARE
+        l_container_name VARCHAR2(128) := SYS_CONTEXT('USERENV', 'CON_NAME');
+      BEGIN
+        IF l_container_name = 'CDB$ROOT' THEN
+          RAISE_APPLICATION_ERROR(
+            -20000,
+            'Connect to the target PDB before creating local user &demo_user.'
+          );
+        END IF;
+      END;
+
+      /
+    languageId: oracle-sql
+  - kind: 2
+    value: |
+      
+      DEFINE demo_user = DEMO_STUDENT
+      DEFINE demo_password = Str0ng_26ai#Lab
+      DEFINE default_tablespace = USERS
+      DEFINE temporary_tablespace = TEMP
+      PROMPT Creating or updating user &demo_user...
+
+      CREATE USER IF NOT EXISTS &demo_user
+        IDENTIFIED BY "&demo_password"
+        DEFAULT TABLESPACE &default_tablespace
+        TEMPORARY TABLESPACE &temporary_tablespace
+        QUOTA UNLIMITED ON &default_tablespace
+        ACCOUNT UNLOCK;
+    languageId: oracle-sql
+  - kind: 2
+    value: >
+      
+      DEFINE demo_user = DEMO_STUDENT
+
+
+      PROMPT Granting login and Oracle 26ai developer privileges...
+
+
+      GRANT CREATE SESSION TO &demo_user;
+
+      GRANT DB_DEVELOPER_ROLE TO &demo_user;
+
+      ALTER USER &demo_user DEFAULT ROLE ALL;
+
+
+      PROMPT User &demo_user is ready.
+
+      PROMPT You can now connect with this user to create and run Oracle AI
+      Database 26ai demos and labs.
+    languageId: oracle-sql
+  - kind: 2
+    value: |
+      DEFINE demo_user = DEMO_STUDENT
+
+      SELECT username, account_status, default_tablespace, temporary_tablespace
+      FROM   dba_users
+      WHERE  username = UPPER('&demo_user');
+    languageId: oracle-sql
+  - kind: 2
+    value: |
+      
+      DEFINE demo_user = DEMO_STUDENT
+
+      SELECT granted_role
+      FROM   dba_role_privs
+      WHERE  grantee = UPPER('&demo_user')
+      AND    granted_role = 'DB_DEVELOPER_ROLE';
+    languageId: oracle-sql
+  - kind: 2
+    value: |
+      DEFINE demo_user = DEMO_STUDENT
+
+      SELECT privilege
+      FROM   dba_sys_privs
+      WHERE  grantee = UPPER('&demo_user')
+      AND    privilege = 'CREATE SESSION';
+    languageId: oracle-sql
